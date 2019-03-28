@@ -1,7 +1,8 @@
-"""
+﻿"""
 # Copyright (c) 2019 Ji Lei
 # Created on 2019-3-27
 # Author:Ji Lei
+# Updeted on 2019-3-28
 # Version 2.0
 # Title: DES
 """
