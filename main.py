@@ -1,3 +1,10 @@
+"""
+# Copyright (c) 2019 Ji Lei
+# Created on 2019-3-27
+# Author:Ji Lei
+# Version 2.0
+# Title: DES
+"""
 import ip
 import Binary as bi
 import function as f
