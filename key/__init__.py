@@ -17,6 +17,7 @@ class KEY:
                  44, 49, 39, 56, 34, 53,
                  46, 42, 50, 36, 29, 32])
     move = list([1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1])
+    move_i = list([0, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1])
 
     def key(self, key_64=[]):  # 64位密钥
         input_56 = []
@@ -48,7 +49,6 @@ class KEY:
             tem = cn + dn
             for m in range(0, 48):
                 self.select(i).append(tem[self.pc_2[m] - 1])
-            print("key", i + 1, self.select(i))
 
     def select(self, num):
         if num == 0: return self.k1

@@ -2,8 +2,8 @@
 # Copyright (c) 2019 Ji Lei
 # Created on 2019-3-27
 # Author:Ji Lei
-# Updeted on 2019-3-28
-# Version 2.0
+# Updeted on 2019-3-29
+# Version 3.0
 # Title: DES
 """
 import ip
@@ -13,54 +13,53 @@ import key
 import math
 
 
-class des():
-    input_type = input("————please choose plaintext type ## 1：str ##2:sixteen-binary ————： ")
+def encode():
+    input_type = input("——请选择明文类型 #字符串：1  #16进制：2——：")
     if input_type == '1':
-        rawtext = input("please input plaintext: ")
+        rawtext = input("——请输入明文——：")
         rawlist = list(rawtext)
         # counter为需要的des密码个数
         counter = math.ceil(len(rawtext) / 8)
         num = len(rawtext) % 8
     elif input_type == '2':
-        rawtext = input("please input 16-binary plaintext: ")
+        rawtext = input("——请输入16进制明文——：")
         rawlist = list(rawtext)
         # counter为需要的des密码个数
         counter = 1
         num = 0
     else:
         print("wrong input")
-    rawkey = input("please input 16-binary key: ")
+    input_key = input("——请输入16进制密钥——：")
 
     # 补齐8个字符
     if num != 0:
         for i in range(8 - num):
             rawlist.append('\0')
-    print("有", counter, "个DES", "最后一个DES补齐", num, "个'\\0'")
+        print("有", counter, "个DES", "最后一个DES补齐", num, "个'\\0'")
 
     k = 1
     key_class = key.KEY()
-    key_64 = bi.key_con(rawkey)
+    key_64 = bi.key_con(input_key)
     key_class.key(key_64)
 
     for i in range(counter):
         # 内部为一次完整的des加密过程
-        list = []
+        list_p = []
         # 字符型切片
         if input_type == '1':
-            temlist = rawlist[(k - 1) * 8: k * 8]
+            local_list = rawlist[(k - 1) * 8: k * 8]
             print("DES", k)
-            print("plaintext", temlist)
-            list = bi.data_con(temlist)
-            print("list", list)
+            print("明文：", local_list)
+            list_p = bi.data_con(local_list)
             k = k + 1
         # 十六进制型切片
         elif input_type == '2':
             for j in rawlist:
-                list = list + bi.sixteenb2two(j)
+                list_p = list_p + bi.sixteenb2two(j)
             print("DES", k)
-            print("plaintext", list)
+            print("明文：", local_list)
         # ip置换
-        l0, r0 = ip.ip(list)
+        l0, r0 = ip.ip(list_p)
 
         # 轮函数
         ln, rn = l0, r0
@@ -69,29 +68,48 @@ class des():
 
         # ip-1置换
         ciphertext = ip.ip_t(rn + ln)
-        print("ciphertext", ciphertext)
         ciphertext = bi.key_i(ciphertext)
-        print("16-binary ciphertext", ciphertext)
+        print("密钥：", str(input_key))
+        print("16进制密文：", ''.join(ciphertext))
 
 
-'''
+def decode():
+    cipher = input("————请输入16进制密文————：")
+    input_key = input("————请输入16进制密钥————：")
+    # 密文处理
+    list_c = []
+    for i in cipher:
+        list_c = list_c + bi.sixteenb2two(i)
+    # 密钥处理
+    key_class = key.KEY()
+    key_64 = bi.key_con(input_key)
+    key_class.key(key_64)
+
+    # ip置换
+    l0, r0 = ip.ip(list_c)
+
+    # 轮函数
+    ln, rn = l0, r0
+    for j in range(16):
+        ln, rn = f.f(ln, rn, key_class.select(15 - j))
+
+    # ip-1置换
+    plaintext = ip.ip_t(rn + ln)
+    plaintext = bi.key_i(plaintext)
+    print("密文:", cipher)
+    print("密钥:", str(input_key))
+    print("16进制明文:", ''.join(plaintext))
+
+
+mode = int(input("——请选择DES模式 #加密：1  #解密：2——: "))
+if mode == 1:
+    encode()
+elif mode == 2:
+    decode()
+
+"""
 DES 1
-plaintext ['i', 'm', 'j', 'i', 'l', 'e', 'i', '\x00']
-list [0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-ciphertext [1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0]
-16-binary ciphertext ['B', '2', '5', 'F', '8', '2', '1', '2', 'E', '9', 'F', '0', '8', 'D', 'D', '2']'''
-
-'''
-DES 1
-plaintext ['i', 'l', 'o', 'v', 'e', 'y', 'o', 'u']
-list [0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1]
-ciphertext [0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1]
-16-binary ciphertext ['2', '1', '9', '4', '5', '2', '0', '0', 'C', '6', '8', 'E', '0', '6', 'A', '5']
-'''
-
-'''
-DES 1
-plaintext [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1]
-ciphertext [1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1]
-16-binary ciphertext ['8', '5', 'E', '8', '1', '3', '5', '4', '0', 'F', '0', 'A', 'B', '4', '0', '5']
-'''
+明文： ['I', 'L', 'o', 'v', 'e', 'Y', 'o', 'u']
+密钥： 1ABF458CD66D45AA
+16进制密文： 524E2AB6B8C59975
+"""
