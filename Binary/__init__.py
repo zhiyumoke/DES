@@ -65,6 +65,25 @@ def sixteenb2two(chr):
     if chr == 'E': return [1, 1, 1, 0]
     if chr == 'F': return [1, 1, 1, 1]
 
+# 16进制转10进制
+def sixtenn2ten(six):
+    if six == '0': return 0
+    if six == '1': return 1
+    if six == '2': return 2
+    if six == '3': return 3
+    if six == '4': return 4
+    if six == '5': return 5
+    if six == '6': return 6
+    if six == '7': return 7
+    if six == '8': return 8
+    if six == '9': return 9
+    if six == 'A': return 10
+    if six == 'B': return 11
+    if six == 'C': return 12
+    if six == 'D': return 13
+    if six == 'E': return 14
+    if six == 'F': return 15
+
 
 def key_con(input_list=[]):  # 在main内分割
     output_64 = []

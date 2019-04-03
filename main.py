@@ -2,8 +2,8 @@
 # Copyright (c) 2019 Ji Lei
 # Created on 2019-3-27
 # Author:Ji Lei
-# Updeted on 2019-3-29
-# Version 3.0
+# Updeted on 2019-4-03
+# Version 4.0
 # Title: DES
 """
 import ip
@@ -96,10 +96,17 @@ def decode():
     # ip-1置换
     plaintext = ip.ip_t(rn + ln)
     plaintext = bi.key_i(plaintext)
+
     print("密文:", cipher)
     print("密钥:", str(input_key))
     print("16进制明文:", ''.join(plaintext))
 
+    # 转成字符型明文
+    plainstr = []
+    for i in range(0, 16, 2):
+        num = bi.sixtenn2ten(plaintext[i]) * 16 + bi.sixtenn2ten(plaintext[i + 1])
+        plainstr.append(chr(num))
+    print("字符型明文:", ''.join(plainstr))
 
 mode = int(input("——请选择DES模式 #加密：1  #解密：2——: "))
 if mode == 1:
